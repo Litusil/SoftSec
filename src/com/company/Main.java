@@ -10,23 +10,36 @@ import java.util.ArrayList;
 import java.lang.*;
 
 public class Main {
+    private static final int START_RANGE = 33;
+    private static final int END_RANGE = 126;
 
     public static void main(String[] args) throws NoSuchAlgorithmException, FileNotFoundException {
-        PrintStream out = new PrintStream(new FileOutputStream("pw.txt"));
+
+        long counter = 0;
+        //PrintStream out = new PrintStream(new FileOutputStream("pw.txt"));
         //System.setOut(out);
         MessageDigest digest = MessageDigest.getInstance("SHA-512");
-        ArrayList passwords = new ArrayList<>();
-        String password = bytesToHex(getHash(digest,"test")) ;
-        String start = "!!!!";
+        String password = "Lamborghini";
+        String passwordHash = bytesToHex(getHash(digest,password)) ;
+        System.out.println(passwordHash);
+        char[] start = new char[password.length()];
 
+        // Wort mit den Start-Chars Initialisieren
+        for(int i = 0; i < password.length();i++){
+            start[i] = START_RANGE;
+        }
+
+        long t1
         while(true){
-            //long t1 = System.nanoTime();
-            start = generateString(start.toCharArray());
-            String hash = bytesToHex(getHash(digest,start)) ;
-            //long t2 = System.nanoTime();
-            //System.out.println("Time pro hash in ms = " + (t2-t1));
-            if(password.equals(hash)){
-                System.out.println("passwort ist " + start + ", hash ist " + hash);
+            counter++;
+            long t3 = System.nanoTime();
+            start = generateString(start).toCharArray();
+            String hash = bytesToHex(getHash(digest,String.valueOf(start))) ;
+            long t4 = System.nanoTime();
+            if(passwordHash.equals(hash)){
+                System.out.println("passwort ist " + String.valueOf(start) + ", hash ist " + hash + ", gefunden in " + counter + " versuchen");
+                long t2 = System.nanoTime();
+                System.out.println("Hash gefunden in " + ((t2-t1)/1000)/1000 + " ms");
                 break;
             }
         }
@@ -41,8 +54,8 @@ public class Main {
         int index = vorgaenger.length - 1;
 
         while(true){
-            if(vorgaenger[index] == 126){
-                vorgaenger[index] = 33;
+            if(vorgaenger[index] == END_RANGE){
+                vorgaenger[index] = START_RANGE;
                 index --;
             } else {
                 vorgaenger[index]++;
